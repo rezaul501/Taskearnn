@@ -472,21 +472,20 @@
             document.getElementById('adsWatched').textContent = userData.adsWatched;
             document.getElementById('userId').textContent = userData.userId;
             
-            // Update completed tasks
+            // Hide completed tasks
             userData.completedTasks.forEach(taskId => {
                 const taskCard = document.querySelector(`[onclick*="${taskId}"]`)?.closest('.task-card');
                 if (taskCard) {
-                    taskCard.classList.add('completed');
-                    taskCard.querySelector('.task-button').disabled = true;
-                    taskCard.querySelector('.task-button').textContent = 'Completed ✓';
+                    taskCard.style.display = 'none';
                 }
             });
 
-            // Update ads button
-            const adsBtn = document.getElementById('watchAdsBtn');
-            if (userData.adsWatched >= 80) {
-                adsBtn.disabled = true;
-                adsBtn.textContent = 'Daily Limit Reached';
+            // Hide ads task when completed
+            const adsTaskCard = document.getElementById('watchAdsBtn')?.closest('.task-card');
+            if (userData.adsWatched >= 80 && adsTaskCard) {
+                adsTaskCard.style.display = 'none';
+            } else if (userData.adsWatched < 80 && adsTaskCard) {
+                adsTaskCard.style.display = 'block';
             }
         }
 
@@ -605,6 +604,12 @@
                     userData.lastAdReset = null;
                     saveUserData();
                     updateDisplay();
+                    
+                    // Show ads task again
+                    const adsTaskCard = document.getElementById('watchAdsBtn')?.closest('.task-card');
+                    if (adsTaskCard) {
+                        adsTaskCard.style.display = 'block';
+                    }
                 } else {
                     startCountdown();
                 }
@@ -629,6 +634,12 @@
                     updateDisplay();
                     countdownDiv.style.display = 'none';
                     clearInterval(interval);
+                    
+                    // Show ads task again
+                    const adsTaskCard = document.getElementById('watchAdsBtn')?.closest('.task-card');
+                    if (adsTaskCard) {
+                        adsTaskCard.style.display = 'block';
+                    }
                 } else {
                     const hours = Math.floor(timeLeft / (1000 * 60 * 60));
                     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
@@ -722,5 +733,5 @@
             checkReferral();
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9795cd47e075336c',t:'MTc1NjkwODMyNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9795d3bf82a3336c',t:'MTc1NjkwODU5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    </html>
