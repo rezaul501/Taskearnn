@@ -450,118 +450,37 @@
             }
         }
 
-        // Check for referral in URL or Telegram start parameter
-        let referrer = null;
-        const urlParams = new URLSearchParams(window.location.search);
-        referrer = urlParams.get('ref');
         
-        // Check Telegram start parameter
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.start_param) {
-            referrer = window.Telegram.WebApp.initDataUnsafe.start_param;
-        }
-        
-        if (referrer && referrer !== userId && !localStorage.getItem('hasReferred')) {
-            // Award referral points to current user (referred user gets bonus)
-            userData.points += 25;
-            userData.referralPoints += 25;
-            localStorage.setItem('hasReferred', 'true');
-            addToHistory('Referral Bonus', 25);
-            
-            // In a real app, you would also award points to the referrer
-            // This would be handled by your backend server
-        }
+// Check for referral in URL or Telegram start parameter
+let referrer = null;
+const urlParams = new URLSearchParams(window.location.search);
+referrer = urlParams.get('ref');
 
-        function updateDisplay() {
-            document.getElementById('totalPoints').textContent = userData.points + ' Points';
-            document.getElementById('dollarValue').textContent = '$' + (userData.points / 1000).toFixed(2);
-            document.getElementById('withdrawAmount').textContent = '$' + (userData.points / 1000).toFixed(2);
-            document.getElementById('adsCounter').textContent = userData.adsWatched + '/80';
-            document.getElementById('totalReferrals').textContent = userData.referrals;
-            document.getElementById('referralPoints').textContent = userData.referralPoints;
-            
-            // Update share button text based on platform
-            const shareButton = document.getElementById('shareButton');
-            if (window.Telegram && window.Telegram.WebApp) {
-                shareButton.textContent = 'Share in Telegram';
-            } else {
-                shareButton.textContent = 'Copy Link';
-            }
-            
-            // Generate Telegram-based referral link
-            const currentUserId = localStorage.getItem('userId') || userId;
-            const referralLink = `https://t.me/taskearnn_bot?start=${currentUserId}`;
-            document.getElementById('referralLink').textContent = referralLink;
+// Check Telegram start parameter
+if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.start_param) {
+    referrer = window.Telegram.WebApp.initDataUnsafe.start_param;
+}
 
-            // Check if ads limit reached
-            checkAdsLimit();
-            
-            // Hide completed tasks
-            hideCompletedTasks();
-            
-            // Update history
-            updateHistory();
-        }
+if (referrer && referrer !== userId && !localStorage.getItem('hasReferred')) {
+    // Award referral points to current user (referred user gets bonus)
+    userData.points += 25;
+    addToHistory('Referral Bonus (New User)', 25);
+    localStorage.setItem('hasReferred', 'true');
 
-        function checkAdsLimit() {
-            const today = new Date().toDateString();
-            if (userData.lastAdsReset !== today) {
-                userData.adsWatched = 0;
-                userData.lastAdsReset = today;
-                saveData();
-            }
+    // ✅ Also update referrer data in localStorage (for demo purpose)
+    let referrerData = JSON.parse(localStorage.getItem(`ref_${referrer}`) || '{"count":0,"points":0}');
+    referrerData.count += 1;
+    referrerData.points += 25; // Referrer gets 25 points
+    localStorage.setItem(`ref_${referrer}`, JSON.stringify(referrerData));
+}
 
-            if (userData.adsWatched >= 80) {
-                document.getElementById('adsButton').disabled = true;
-                document.getElementById('adsButton').textContent = 'Daily Limit Reached';
-                showCountdown();
-            }
-        }
+// Load referrer stats for current user
+let myRefData = JSON.parse(localStorage.getItem(`ref_${userId}`) || '{"count":0,"points":0}');
+userData.referrals = myRefData.count;
+userData.referralPoints = myRefData.points;
 
-        function showCountdown() {
-            const countdown = document.getElementById('adsCountdown');
-            countdown.style.display = 'block';
-            
-            function updateCountdown() {
-                const now = new Date();
-                const tomorrow = new Date(now);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                tomorrow.setHours(0, 0, 0, 0);
-                
-                const diff = tomorrow - now;
-                const hours = Math.floor(diff / (1000 * 60 * 60));
-                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                countdown.textContent = `Next ads in: ${hours}h ${minutes}m ${seconds}s`;
-            }
-            
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-        }
 
-        function hideCompletedTasks() {
-            userData.completedTasks.forEach(taskId => {
-                const taskElement = document.getElementById(taskId + 'Task');
-                if (taskElement) {
-                    taskElement.style.display = 'none';
-                }
-            });
-        }
-
-        function completeTask(taskType, points, url) {
-            if (userData.completedTasks.includes(taskType)) return;
-            
-            // Open the link
-            window.open(url, '_blank');
-            
-            // Award points after a short delay (simulating task completion)
-            setTimeout(() => {
-                userData.points += points;
-                userData.completedTasks.push(taskType);
-                addToHistory(getTaskName(taskType), points);
-                showSuccess(`+${points} points earned!`);
-                saveData();
-                updateDisplay();
+updateDisplay();
             }, 2000);
         }
 
@@ -721,4 +640,4 @@
         updateDisplay();
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9795f128f0e1336c',t:'MTc1NjkwOTc5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-    </html>
+                    </html>
