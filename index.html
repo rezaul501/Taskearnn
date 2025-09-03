@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskEarnn - Earn Points Daily</title>
     <script src='//libtl.com/sdk.js' data-zone='9817795' data-sdk='show_9817795'></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -38,7 +39,7 @@
 
         .header h1 {
             font-size: 24px;
-            font-weight: 700;
+            font-weight: bold;
             margin-bottom: 5px;
         }
 
@@ -50,14 +51,19 @@
             margin-top: 10px;
         }
 
-        .points-display span {
-            font-size: 18px;
-            font-weight: 600;
+        .points-display .points {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .points-display .value {
+            font-size: 14px;
+            opacity: 0.9;
         }
 
         .main-content {
             padding: 20px;
-            padding-bottom: 100px;
+            padding-bottom: 80px;
         }
 
         .section {
@@ -71,9 +77,9 @@
         .task-card {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             border-left: 4px solid #4f46e5;
             transition: transform 0.2s;
         }
@@ -82,22 +88,16 @@
             transform: translateY(-2px);
         }
 
-        .task-card.completed {
-            opacity: 0.6;
-            background: #f8f9fa;
-        }
-
         .task-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .task-title {
-            font-size: 16px;
             font-weight: 600;
-            color: #333;
+            color: #1f2937;
         }
 
         .task-points {
@@ -106,23 +106,23 @@
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: bold;
         }
 
         .task-description {
-            color: #666;
+            color: #6b7280;
             font-size: 14px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .task-button {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
-            font-weight: 600;
             cursor: pointer;
+            font-weight: 600;
             width: 100%;
             transition: all 0.3s;
         }
@@ -147,21 +147,17 @@
             background: #f59e0b;
         }
 
-        .ads-counter {
-            text-align: center;
-            margin: 10px 0;
-            font-size: 14px;
-            color: #666;
+        .ads-task {
+            border-left-color: #ef4444;
         }
 
-        .countdown {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            margin: 10px 0;
-            font-weight: 600;
+        .ads-counter {
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
         }
 
         .bottom-nav {
@@ -175,18 +171,17 @@
             border-top: 1px solid #e5e7eb;
             display: flex;
             justify-content: around;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 12px 0;
         }
 
         .nav-item {
             flex: 1;
             text-align: center;
-            padding: 10px;
+            padding: 8px;
             cursor: pointer;
             transition: all 0.3s;
             border-radius: 8px;
-            margin: 0 5px;
+            margin: 0 4px;
         }
 
         .nav-item.active {
@@ -194,20 +189,16 @@
             color: white;
         }
 
-        .nav-item:hover {
+        .nav-item:not(.active):hover {
             background: #f3f4f6;
-        }
-
-        .nav-item.active:hover {
-            background: #4f46e5;
         }
 
         .nav-icon {
             font-size: 20px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
-        .nav-text {
+        .nav-label {
             font-size: 12px;
             font-weight: 500;
         }
@@ -217,85 +208,80 @@
             color: white;
             border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .withdraw-amount {
             font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-weight: bold;
+            margin-bottom: 8px;
         }
 
         .withdraw-button {
             background: white;
             color: #10b981;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 24px;
             border-radius: 8px;
-            font-weight: 600;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .referral-card {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
             color: white;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 20px;
-            text-align: center;
         }
 
         .referral-link {
             background: rgba(255,255,255,0.2);
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
-            margin: 10px 0;
+            margin: 12px 0;
             word-break: break-all;
-            font-size: 12px;
+            font-size: 14px;
         }
 
         .copy-button {
             background: white;
-            color: #f59e0b;
+            color: #8b5cf6;
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
-            font-weight: 600;
             cursor: pointer;
-            font-size: 12px;
+            font-weight: 600;
         }
 
         .history-item {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
         }
 
-        .history-date {
-            font-size: 12px;
-            color: #666;
+        .countdown {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 12px 0;
         }
 
-        .history-points {
-            font-weight: 600;
-            color: #10b981;
-        }
-
-        .alert {
-            background: #dbeafe;
-            border: 1px solid #3b82f6;
-            color: #1e40af;
+        .success-message {
+            background: #10b981;
+            color: white;
             padding: 12px;
             border-radius: 8px;
-            margin: 10px 0;
             text-align: center;
+            margin: 12px 0;
+            display: none;
         }
     </style>
 </head>
@@ -304,434 +290,435 @@
         <div class="header">
             <h1>TaskEarnn</h1>
             <div class="points-display">
-                <span id="totalPoints">0</span> Points
+                <div class="points" id="totalPoints">0 Points</div>
+                <div class="value" id="dollarValue">$0.00</div>
             </div>
         </div>
 
         <div class="main-content">
             <!-- Home Section -->
-            <div id="home" class="section active">
-                <div class="task-card">
+            <div class="section active" id="home">
+                <div class="success-message" id="successMessage"></div>
+                
+                <!-- Regular Tasks -->
+                <div class="task-card" id="telegramTask">
                     <div class="task-header">
-                        <div class="task-title">Join Telegram Group</div>
+                        <div class="task-title">📱 Join Telegram Group</div>
                         <div class="task-points">+10 Points</div>
                     </div>
-                    <div class="task-description">Join our official Telegram group to stay updated with latest news and announcements.</div>
-                    <button class="task-button" onclick="completeTask('telegram', 10, 'https://t.me/+9AMDgLtDPK82ZmI1')">Join Group</button>
+                    <div class="task-description">Join our official Telegram community</div>
+                    <button class="task-button" onclick="completeTask('telegram', 10, 'https://t.me/+9AMDgLtDPK82ZmI1')">Join Now</button>
                 </div>
 
-                <div class="task-card">
+                <div class="task-card" id="youtubeTask">
                     <div class="task-header">
-                        <div class="task-title">Subscribe YouTube Channel</div>
+                        <div class="task-title">🎥 Subscribe YouTube</div>
                         <div class="task-points">+10 Points</div>
                     </div>
-                    <div class="task-description">Subscribe to our YouTube channel for tutorials and updates.</div>
+                    <div class="task-description">Subscribe to our YouTube channel</div>
                     <button class="task-button" onclick="completeTask('youtube', 10, 'https://youtube.com/@easybalance-s3s?si=Nlxb1O1ZsR6RJp_r')">Subscribe</button>
                 </div>
 
-                <div class="task-card">
+                <div class="task-card" id="twitterTask">
                     <div class="task-header">
-                        <div class="task-title">Follow on Twitter</div>
+                        <div class="task-title">🐦 Follow Twitter</div>
                         <div class="task-points">+10 Points</div>
                     </div>
-                    <div class="task-description">Follow us on Twitter for real-time updates and community interaction.</div>
+                    <div class="task-description">Follow us on Twitter/X</div>
                     <button class="task-button" onclick="completeTask('twitter', 10, 'https://x.com/DWarner6869?t=7B3FG-CbulwhFuAecx6oMA&s=09')">Follow</button>
                 </div>
 
-                <div class="task-card special-task">
+                <!-- Special Task -->
+                <div class="task-card special-task" id="specialTask">
                     <div class="task-header">
-                        <div class="task-title">🌟 Special Task</div>
+                        <div class="task-title">⭐ Special Task</div>
                         <div class="task-points">+20 Points</div>
                     </div>
-                    <div class="task-description">Complete this special promotional task for bonus points!</div>
-                    <button class="task-button" onclick="completeSpecialTask()">Complete Special Task</button>
+                    <div class="task-description">Complete special promotional task</div>
+                    <button class="task-button" onclick="completeSpecialTask()">Complete Task</button>
                 </div>
 
-                <div class="task-card">
+                <!-- Ads Task -->
+                <div class="task-card ads-task" id="adsTask">
                     <div class="task-header">
-                        <div class="task-title">Watch Ads (Daily)</div>
-                        <div class="task-points">+800 Points</div>
+                        <div class="task-title">📺 Watch Ads</div>
+                        <div class="task-points">+10 Points</div>
+                        <span class="ads-counter" id="adsCounter">0/80</span>
                     </div>
-                    <div class="task-description">Watch 80 ads to earn points. Resets every 24 hours.</div>
-                    <div class="ads-counter">
-                        Ads watched today: <span id="adsWatched">0</span>/80
-                    </div>
-                    <div id="adsCountdown" class="countdown" style="display: none;">
-                        Next ads available in: <span id="countdownTimer"></span>
-                    </div>
-                    <button id="watchAdsBtn" class="task-button" onclick="watchAd()">Watch Ad</button>
+                    <div class="task-description">Watch ads to earn points (80 ads daily)</div>
+                    <div class="countdown" id="adsCountdown" style="display: none;"></div>
+                    <button class="task-button" id="adsButton" onclick="watchAd()">Watch Ad</button>
                 </div>
             </div>
 
             <!-- Withdraw Section -->
-            <div id="withdraw" class="section">
+            <div class="section" id="withdraw">
                 <div class="withdraw-card">
-                    <div class="withdraw-amount">$<span id="withdrawAmount">0.00</span></div>
+                    <div class="withdraw-amount" id="withdrawAmount">$0.00</div>
                     <div>Available for withdrawal</div>
-                    <div style="font-size: 12px; margin-top: 5px;">1000 points = $1.00</div>
-                    <button class="withdraw-button" onclick="withdraw()">Withdraw $5.00</button>
+                    <button class="withdraw-button" onclick="withdraw()">Withdraw $5</button>
                 </div>
-                
-                <div class="alert">
-                    Minimum withdrawal amount is $5.00 (5000 points)
+                <div class="task-card">
+                    <div class="task-title">💰 Withdrawal Info</div>
+                    <div class="task-description">
+                        • Minimum withdrawal: $5 (5000 points)<br>
+                        • Rate: $1 = 1000 points<br>
+                        • Processing time: 24-48 hours
+                    </div>
                 </div>
             </div>
 
             <!-- Refer Section -->
-            <div id="refer" class="section">
+            <div class="section" id="refer">
                 <div class="referral-card">
-                    <h3>Invite Friends & Earn</h3>
-                    <div>Get 25 points for each friend you refer!</div>
-                    <div class="referral-link" id="referralLink">
-                        https://t.me/taskearnn_bot?start=<span id="userId"></span>
-                    </div>
-                    <button class="copy-button" onclick="copyReferralLink()">Copy Link</button>
+                    <div class="task-title">👥 Invite Friends</div>
+                    <div class="task-description">Earn 25 points for each friend you refer!</div>
+                    <div class="referral-link" id="referralLink">Loading...</div>
+                    <button class="copy-button" onclick="copyReferralLink()" id="shareButton">Share Link</button>
                 </div>
-
-                <div style="background: white; border-radius: 12px; padding: 20px; margin-top: 20px;">
-                    <h4 style="margin-bottom: 15px;">Referral Stats</h4>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>Total Referrals:</span>
-                        <span id="totalReferrals">0</span>
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-title">📊 Referral Stats</div>
                     </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>Referral Points:</span>
-                        <span id="referralPoints">0</span>
+                    <div class="task-description">
+                        Total Referrals: <span id="totalReferrals">0</span><br>
+                        Referral Points: <span id="referralPoints">0</span>
                     </div>
                 </div>
             </div>
 
             <!-- History Section -->
-            <div id="history" class="section">
-                <h3 style="margin-bottom: 20px;">Points History</h3>
+            <div class="section" id="history">
+                <div class="task-card">
+                    <div class="task-title">📈 Points History</div>
+                </div>
                 <div id="historyList">
-                    <!-- History items will be populated here -->
+                    <div class="history-item">
+                        <span>Welcome Bonus</span>
+                        <span style="color: #10b981;">+0 Points</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="showSection('home')">
+            <div class="nav-item active" onclick="switchSection('home')">
                 <div class="nav-icon">🏠</div>
-                <div class="nav-text">Home</div>
+                <div class="nav-label">Home</div>
             </div>
-            <div class="nav-item" onclick="showSection('withdraw')">
+            <div class="nav-item" onclick="switchSection('withdraw')">
                 <div class="nav-icon">💰</div>
-                <div class="nav-text">Withdraw</div>
+                <div class="nav-label">Withdraw</div>
             </div>
-            <div class="nav-item" onclick="showSection('refer')">
+            <div class="nav-item" onclick="switchSection('refer')">
                 <div class="nav-icon">👥</div>
-                <div class="nav-text">Refer</div>
+                <div class="nav-label">Refer</div>
             </div>
-            <div class="nav-item" onclick="showSection('history')">
+            <div class="nav-item" onclick="switchSection('history')">
                 <div class="nav-icon">📊</div>
-                <div class="nav-text">History</div>
+                <div class="nav-label">History</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize user data
+        // Initialize app data
         let userData = {
-            points: 0,
-            completedTasks: [],
-            adsWatched: 0,
-            lastAdReset: null,
-            referrals: 0,
-            referralPoints: 0,
-            history: [],
-            userId: generateUserId()
+            points: parseInt(localStorage.getItem('points')) || 0,
+            completedTasks: JSON.parse(localStorage.getItem('completedTasks')) || [],
+            adsWatched: parseInt(localStorage.getItem('adsWatched')) || 0,
+            lastAdsReset: localStorage.getItem('lastAdsReset') || new Date().toDateString(),
+            referrals: parseInt(localStorage.getItem('referrals')) || 0,
+            referralPoints: parseInt(localStorage.getItem('referralPoints')) || 0,
+            history: JSON.parse(localStorage.getItem('history')) || []
         };
 
-        // Load saved data
-        function loadUserData() {
-            const saved = localStorage.getItem('taskearnn_data');
-            if (saved) {
-                userData = { ...userData, ...JSON.parse(saved) };
+        // Generate user ID and referral link
+        const userId = localStorage.getItem('userId') || 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('userId', userId);
+        
+        // Telegram WebApp detection and user info
+        let telegramUser = null;
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            telegramUser = window.Telegram.WebApp.initDataUnsafe.user;
+            if (telegramUser) {
+                const telegramUserId = 'tg_' + telegramUser.id;
+                if (!localStorage.getItem('userId') || localStorage.getItem('userId').startsWith('user_')) {
+                    localStorage.setItem('userId', telegramUserId);
+                }
             }
-            updateDisplay();
-            checkAdReset();
-            updateReferralDisplay();
+        }
+
+        // Check for referral in URL or Telegram start parameter
+        let referrer = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        referrer = urlParams.get('ref');
+        
+        // Check Telegram start parameter
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.start_param) {
+            referrer = window.Telegram.WebApp.initDataUnsafe.start_param;
+        }
+        
+        if (referrer && referrer !== userId && !localStorage.getItem('hasReferred')) {
+            // Award referral points to current user (referred user gets bonus)
+            userData.points += 25;
+            userData.referralPoints += 25;
+            localStorage.setItem('hasReferred', 'true');
+            addToHistory('Referral Bonus', 25);
+            
+            // In a real app, you would also award points to the referrer
+            // This would be handled by your backend server
+        }
+
+        function updateDisplay() {
+            document.getElementById('totalPoints').textContent = userData.points + ' Points';
+            document.getElementById('dollarValue').textContent = '$' + (userData.points / 1000).toFixed(2);
+            document.getElementById('withdrawAmount').textContent = '$' + (userData.points / 1000).toFixed(2);
+            document.getElementById('adsCounter').textContent = userData.adsWatched + '/80';
+            document.getElementById('totalReferrals').textContent = userData.referrals;
+            document.getElementById('referralPoints').textContent = userData.referralPoints;
+            
+            // Update share button text based on platform
+            const shareButton = document.getElementById('shareButton');
+            if (window.Telegram && window.Telegram.WebApp) {
+                shareButton.textContent = 'Share in Telegram';
+            } else {
+                shareButton.textContent = 'Copy Link';
+            }
+            
+            // Generate Telegram-based referral link
+            const currentUserId = localStorage.getItem('userId') || userId;
+            const referralLink = `https://t.me/taskearnn_bot?start=${currentUserId}`;
+            document.getElementById('referralLink').textContent = referralLink;
+
+            // Check if ads limit reached
+            checkAdsLimit();
+            
+            // Hide completed tasks
+            hideCompletedTasks();
+            
+            // Update history
             updateHistory();
         }
 
-        // Save user data
-        function saveUserData() {
-            localStorage.setItem('taskearnn_data', JSON.stringify(userData));
+        function checkAdsLimit() {
+            const today = new Date().toDateString();
+            if (userData.lastAdsReset !== today) {
+                userData.adsWatched = 0;
+                userData.lastAdsReset = today;
+                saveData();
+            }
+
+            if (userData.adsWatched >= 80) {
+                document.getElementById('adsButton').disabled = true;
+                document.getElementById('adsButton').textContent = 'Daily Limit Reached';
+                showCountdown();
+            }
         }
 
-        // Generate unique user ID
-        function generateUserId() {
-            return 'user_' + Math.random().toString(36).substr(2, 9);
-        }
-
-        // Update display
-        function updateDisplay() {
-            document.getElementById('totalPoints').textContent = userData.points;
-            document.getElementById('withdrawAmount').textContent = (userData.points / 1000).toFixed(2);
-            document.getElementById('adsWatched').textContent = userData.adsWatched;
-            document.getElementById('userId').textContent = userData.userId;
+        function showCountdown() {
+            const countdown = document.getElementById('adsCountdown');
+            countdown.style.display = 'block';
             
-            // Hide completed tasks
+            function updateCountdown() {
+                const now = new Date();
+                const tomorrow = new Date(now);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(0, 0, 0, 0);
+                
+                const diff = tomorrow - now;
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                countdown.textContent = `Next ads in: ${hours}h ${minutes}m ${seconds}s`;
+            }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        function hideCompletedTasks() {
             userData.completedTasks.forEach(taskId => {
-                const taskCard = document.querySelector(`[onclick*="${taskId}"]`)?.closest('.task-card');
-                if (taskCard) {
-                    taskCard.style.display = 'none';
+                const taskElement = document.getElementById(taskId + 'Task');
+                if (taskElement) {
+                    taskElement.style.display = 'none';
                 }
             });
-
-            // Hide ads task when completed
-            const adsTaskCard = document.getElementById('watchAdsBtn')?.closest('.task-card');
-            if (userData.adsWatched >= 80 && adsTaskCard) {
-                adsTaskCard.style.display = 'none';
-            } else if (userData.adsWatched < 80 && adsTaskCard) {
-                adsTaskCard.style.display = 'block';
-            }
         }
 
-        // Show section
-        function showSection(sectionId) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
+        function completeTask(taskType, points, url) {
+            if (userData.completedTasks.includes(taskType)) return;
             
-            document.getElementById(sectionId).classList.add('active');
-            event.target.closest('.nav-item').classList.add('active');
-        }
-
-        // Complete task
-        function completeTask(taskId, points, url) {
-            if (userData.completedTasks.includes(taskId)) {
-                alert('Task already completed!');
-                return;
-            }
-
             // Open the link
             window.open(url, '_blank');
             
-            // Add points and mark as completed
-            userData.points += points;
-            userData.completedTasks.push(taskId);
-            
-            // Add to history
-            userData.history.unshift({
-                date: new Date().toLocaleDateString(),
-                task: taskId,
-                points: points
-            });
-
-            saveUserData();
-            updateDisplay();
-            updateHistory();
-            
-            alert(`Task completed! You earned ${points} points.`);
+            // Award points after a short delay (simulating task completion)
+            setTimeout(() => {
+                userData.points += points;
+                userData.completedTasks.push(taskType);
+                addToHistory(getTaskName(taskType), points);
+                showSuccess(`+${points} points earned!`);
+                saveData();
+                updateDisplay();
+            }, 2000);
         }
 
-        // Complete special task
         function completeSpecialTask() {
-            if (userData.completedTasks.includes('special')) {
-                alert('Special task already completed!');
-                return;
-            }
-
+            if (userData.completedTasks.includes('special')) return;
+            
             // Open special task link
             window.open('https://immantlingknocksaiding.com/y5rEoe72906f37b299fc0068ca0dff2f5f345e1f9e849?q=TASKEARNN', '_blank');
             
-            // Add points and mark as completed
-            userData.points += 20;
-            userData.completedTasks.push('special');
-            
-            // Add to history
-            userData.history.unshift({
-                date: new Date().toLocaleDateString(),
-                task: 'Special Task',
-                points: 20
-            });
-
-            saveUserData();
-            updateDisplay();
-            updateHistory();
-            
-            alert('Special task completed! You earned 20 points.');
-        }
-
-        // Watch ad function
-        function watchAd() {
-            if (userData.adsWatched >= 80) {
-                alert('Daily ad limit reached! Come back tomorrow.');
-                return;
-            }
-
-            // Rewarded interstitial
-            show_9817795().then(() => {
-                // User reward function after watching ad
-                userData.adsWatched++;
-                userData.points += 10;
-                
-                // Add to history
-                userData.history.unshift({
-                    date: new Date().toLocaleDateString(),
-                    task: 'Watch Ad',
-                    points: 10
-                });
-
-                if (userData.adsWatched >= 80) {
-                    userData.lastAdReset = Date.now();
-                    startCountdown();
-                }
-
-                saveUserData();
+            setTimeout(() => {
+                userData.points += 20;
+                userData.completedTasks.push('special');
+                addToHistory('Special Task', 20);
+                showSuccess('+20 points earned from special task!');
+                saveData();
                 updateDisplay();
-                updateHistory();
-                
-                alert('You have seen an ad! +10 points earned.');
+            }, 2000);
+        }
+
+        function watchAd() {
+            if (userData.adsWatched >= 80) return;
+            
+            // Use the provided ad SDK
+            show_9817795().then(() => {
+                userData.points += 10;
+                userData.adsWatched++;
+                addToHistory('Ad Watched', 10);
+                showSuccess('+10 points earned!');
+                saveData();
+                updateDisplay();
             }).catch(() => {
-                alert('Ad failed to load. Please try again.');
+                // Fallback if ad fails
+                alert('Ad not available right now. Try again later.');
             });
         }
 
-        // Check ad reset
-        function checkAdReset() {
-            if (userData.lastAdReset) {
-                const timePassed = Date.now() - userData.lastAdReset;
-                const twentyFourHours = 24 * 60 * 60 * 1000;
-                
-                if (timePassed >= twentyFourHours) {
-                    userData.adsWatched = 0;
-                    userData.lastAdReset = null;
-                    saveUserData();
-                    updateDisplay();
-                    
-                    // Show ads task again
-                    const adsTaskCard = document.getElementById('watchAdsBtn')?.closest('.task-card');
-                    if (adsTaskCard) {
-                        adsTaskCard.style.display = 'block';
-                    }
-                } else {
-                    startCountdown();
-                }
-            }
+        function getTaskName(taskType) {
+            const names = {
+                'telegram': 'Telegram Group',
+                'youtube': 'YouTube Subscribe',
+                'twitter': 'Twitter Follow',
+                'special': 'Special Task'
+            };
+            return names[taskType] || taskType;
         }
 
-        // Start countdown
-        function startCountdown() {
-            const countdownDiv = document.getElementById('adsCountdown');
-            const timerSpan = document.getElementById('countdownTimer');
-            countdownDiv.style.display = 'block';
-
-            const interval = setInterval(() => {
-                const timePassed = Date.now() - userData.lastAdReset;
-                const twentyFourHours = 24 * 60 * 60 * 1000;
-                const timeLeft = twentyFourHours - timePassed;
-
-                if (timeLeft <= 0) {
-                    userData.adsWatched = 0;
-                    userData.lastAdReset = null;
-                    saveUserData();
-                    updateDisplay();
-                    countdownDiv.style.display = 'none';
-                    clearInterval(interval);
-                    
-                    // Show ads task again
-                    const adsTaskCard = document.getElementById('watchAdsBtn')?.closest('.task-card');
-                    if (adsTaskCard) {
-                        adsTaskCard.style.display = 'block';
-                    }
-                } else {
-                    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-                    timerSpan.textContent = `${hours}h ${minutes}m ${seconds}s`;
-                }
-            }, 1000);
-        }
-
-        // Withdraw function
-        function withdraw() {
-            if (userData.points < 5000) {
-                alert('Minimum withdrawal is $5.00 (5000 points)');
-                return;
-            }
-            
-            alert('Withdrawal request submitted! You will receive payment within 24-48 hours.');
-            userData.points -= 5000;
-            
-            // Add to history
-            userData.history.unshift({
+        function addToHistory(action, points) {
+            const historyItem = {
+                action: action,
+                points: points,
                 date: new Date().toLocaleDateString(),
-                task: 'Withdrawal',
-                points: -5000
-            });
-
-            saveUserData();
-            updateDisplay();
-            updateHistory();
+                time: new Date().toLocaleTimeString()
+            };
+            userData.history.unshift(historyItem);
+            if (userData.history.length > 50) {
+                userData.history = userData.history.slice(0, 50);
+            }
         }
 
-        // Copy referral link
-        function copyReferralLink() {
-            const link = `https://t.me/taskearnn_bot?start=${userData.userId}`;
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Referral link copied to clipboard!');
-            });
-        }
-
-        // Update referral display
-        function updateReferralDisplay() {
-            document.getElementById('totalReferrals').textContent = userData.referrals;
-            document.getElementById('referralPoints').textContent = userData.referralPoints;
-        }
-
-        // Update history
         function updateHistory() {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
             
-            userData.history.slice(0, 20).forEach(item => {
+            userData.history.forEach(item => {
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
                 historyItem.innerHTML = `
                     <div>
-                        <div>${item.task}</div>
-                        <div class="history-date">${item.date}</div>
+                        <div>${item.action}</div>
+                        <div style="font-size: 12px; color: #6b7280;">${item.date} ${item.time}</div>
                     </div>
-                    <div class="history-points">${item.points > 0 ? '+' : ''}${item.points}</div>
+                    <span style="color: #10b981;">+${item.points} Points</span>
                 `;
                 historyList.appendChild(historyItem);
             });
-        }
-
-        // Check for referral
-        function checkReferral() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const referrer = urlParams.get('start');
             
-            if (referrer && referrer !== userData.userId && !localStorage.getItem('referred')) {
-                // Add referral bonus
-                userData.points += 25;
-                userData.history.unshift({
-                    date: new Date().toLocaleDateString(),
-                    task: 'Referral Bonus',
-                    points: 25
-                });
-                
-                localStorage.setItem('referred', 'true');
-                saveUserData();
-                updateDisplay();
-                updateHistory();
-                
-                alert('Welcome! You received 25 bonus points for joining through a referral!');
+            if (userData.history.length === 0) {
+                historyList.innerHTML = '<div class="history-item"><span>No history yet</span></div>';
             }
         }
 
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function withdraw() {
+            if (userData.points < 5000) {
+                alert('Minimum withdrawal is $5 (5000 points)');
+                return;
+            }
+            
+            const amount = Math.floor(userData.points / 1000) * 1000;
+            userData.points -= amount;
+            addToHistory('Withdrawal', -amount);
+            showSuccess(`$${amount/1000} withdrawal requested!`);
+            saveData();
+            updateDisplay();
+        }
+
+        function copyReferralLink() {
+            const referralLink = document.getElementById('referralLink').textContent;
+            
+            // If in Telegram WebApp, use Telegram sharing
+            if (window.Telegram && window.Telegram.WebApp) {
+                const shareText = `🚀 Join TaskEarnn and earn money daily!\n\n💰 Earn points by:\n• Joining groups\n• Watching ads\n• Completing tasks\n\n🎁 Get 25 bonus points when you join!\n\n${referralLink}`;
+                
+                window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(shareText)}`);
+            } else {
+                // Fallback to clipboard copy
+                navigator.clipboard.writeText(referralLink).then(() => {
+                    showSuccess('Referral link copied!');
+                }).catch(() => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = referralLink;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showSuccess('Referral link copied!');
+                });
+            }
+        }
+
+        function switchSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+        }
+
+        function saveData() {
+            localStorage.setItem('points', userData.points);
+            localStorage.setItem('completedTasks', JSON.stringify(userData.completedTasks));
+            localStorage.setItem('adsWatched', userData.adsWatched);
+            localStorage.setItem('lastAdsReset', userData.lastAdsReset);
+            localStorage.setItem('referrals', userData.referrals);
+            localStorage.setItem('referralPoints', userData.referralPoints);
+            localStorage.setItem('history', JSON.stringify(userData.history));
+        }
+
         // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            loadUserData();
-            checkReferral();
-        });
+        updateDisplay();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9795d3bf82a3336c',t:'MTc1NjkwODU5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9795f128f0e1336c',t:'MTc1NjkwOTc5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
     </html>
