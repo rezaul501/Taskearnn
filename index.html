@@ -369,21 +369,99 @@
             </div>
 
             <!-- Refer Section -->
-            <div class="section" id="refer">
-                <div class="referral-card">
-                    <div class="task-title">👥 Invite Friends</div>
-                    <div class="task-description">Earn 25 points for each friend you refer!</div>
-                    <div class="referral-link" id="referralLink">Loading...</div>
-                    <button class="copy-button" onclick="copyReferralLink()" id="shareButton">Share Link</button>
-                </div>
-                <div class="task-card">
-                    <div class="task-header">
-                        <div class="task-title">📊 Referral Stats</div>
-                    </div>
-                    <div class="task-description">
-                        Total Referrals: <span id="totalReferrals">0</span><br>
-                        Referral Points: <span id="referralPoints">0</span>
-                    </div>
+            <script>
+    // Initialize app data
+    let userData = {
+        points: parseInt(localStorage.getItem('points')) || 0,
+        completedTasks: JSON.parse(localStorage.getItem('completedTasks')) || [],
+        adsWatched: parseInt(localStorage.getItem('adsWatched')) || 0,
+        lastAdsReset: localStorage.getItem('lastAdsReset') || new Date().toDateString(),
+        referrals: parseInt(localStorage.getItem('referrals')) || 0,
+        referralPoints: parseInt(localStorage.getItem('referralPoints')) || 0,
+        history: JSON.parse(localStorage.getItem('history')) || []
+    };
+
+    // Generate user ID and referral link
+    const userId = localStorage.getItem('userId') || 'user_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('userId', userId);
+
+    // Telegram WebApp detection and user info
+    let telegramUser = null;
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        telegramUser = window.Telegram.WebApp.initDataUnsafe.user;
+        if (telegramUser) {
+            const telegramUserId = 'tg_' + telegramUser.id;
+            if (!localStorage.getItem('userId') || localStorage.getItem('userId').startsWith('user_')) {
+                localStorage.setItem('userId', telegramUserId);
+            }
+        }
+    }
+
+    // Check for referral in URL or Telegram start parameter
+    let referrer = null;
+    const urlParams = new URLSearchParams(window.location.search);
+    referrer = urlParams.get('ref');
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe.start_param) {
+        referrer = window.Telegram.WebApp.initDataUnsafe.start_param;
+    }
+
+    // ----------- NEW: Send referral to server -----------
+    async function sendReferralToServerOnce(referrer, userId) {
+        if (!userId) return;
+        if (localStorage.getItem('referralSent') === 'true') return;
+
+        try {
+            const r = await fetch('/api/referral', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ referrerId: referrer, newUserId: userId })
+            });
+            const data = await r.json();
+            if (data?.user) {
+                userData.points = data.user.points || userData.points;
+                userData.referrals = data.user.referrals || userData.referrals;
+                saveData();
+                updateDisplay();
+            }
+            localStorage.setItem('referralSent', 'true');
+        } catch (e) {
+            console.log('Referral API error:', e);
+        }
+    }
+
+    // ----------- NEW: Sync user data from server -----------
+    async function syncFromServer() {
+        const currentUserId = localStorage.getItem('userId') || userId;
+        if (!currentUserId) return;
+        try {
+            const r = await fetch(`/api/user?userId=${encodeURIComponent(currentUserId)}`);
+            const data = await r.json();
+            if (data) {
+                userData.points = data.points ?? userData.points;
+                userData.referrals = data.referrals ?? userData.referrals;
+                saveData();
+                updateDisplay();
+            }
+        } catch(e) { console.log('sync error', e); }
+    }
+
+    // Call referral + sync once page loads
+    sendReferralToServerOnce(referrer, localStorage.getItem('userId') || userId)
+      .then(syncFromServer);
+
+    // ---------- OLD fake local bonus system removed ----------
+    // if (referrer && referrer !== userId && !localStorage.getItem('hasReferred')) {
+    //   userData.points += 25;
+    //   userData.referralPoints += 25;
+    //   localStorage.setItem('hasReferred', 'true');
+    //   addToHistory('Referral Bonus', 25);
+    // }
+
+    // (rest of your functions: updateDisplay, completeTask, watchAd, withdraw, etc... stay SAME)
+
+</script>
+
                 </div>
             </div>
 
